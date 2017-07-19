@@ -1,6 +1,8 @@
 import java.awt.Canvas;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -20,6 +22,9 @@ public class Game extends Canvas implements Runnable {
 	private BufferedImage spriteSheet = null;
 	
 	private Player player;
+	private Ball ball;
+	
+	private boolean initHit; //checks if ball is still moveable with player
 		
 	private synchronized void start() {
 		if (running) {
@@ -66,9 +71,9 @@ public class Game extends Canvas implements Runnable {
 			frames++;
 			if (System.currentTimeMillis() - timer > 1000) {
 				timer += 1000;
-				System.out.println(frames);
 				updates = 0;
 				frames = 0;
+				System.out.println(initHit);
 			}
 		}
 		stop();
@@ -77,6 +82,7 @@ public class Game extends Canvas implements Runnable {
 	
 	private void tick() {
 		player.tick();
+		ball.tick();
 		
 	}
 	
@@ -88,6 +94,7 @@ public class Game extends Canvas implements Runnable {
 		}
 		Graphics g = bs.getDrawGraphics();
 		g.drawImage(image, 0, 0, getWidth(), getHeight(), this); 
+		ball.render(g);
 		player.render(g);
 		
 		
@@ -103,8 +110,33 @@ public class Game extends Canvas implements Runnable {
 		}catch (IOException e) {
 			e.printStackTrace();
 		}
+		addKeyListener(new UserInput(this));
+		player = new Player(200, 300, this);
+		ball = new Ball(this, player);
+		initHit = true;
+	}
+	
+	public void keyPressed (KeyEvent e) { 
+		int key = e.getKeyCode();
+		if (key == KeyEvent.VK_RIGHT) {
+			player.setXSpeed(1);
+			if (initHit == true)
+				ball.setXSpeed(player.getXSpeed());
+		}
+		else if (key == KeyEvent.VK_LEFT) {
+			player.setXSpeed(-1);
+			if (initHit == true)
+				ball.setXSpeed(player.getXSpeed());
+		}
+		else if (key == KeyEvent.VK_SPACE) {
+			initHit = false;
+			ball.setXSpeed(1);
+			ball.setYSpeed(-1);
+		}
+	}
+	
+	public void keyReleased(KeyEvent e) {
 		
-		player = new Player(200, 200, this);
 	}
 	
 	public static void main(String args[]) {
@@ -127,6 +159,7 @@ public class Game extends Canvas implements Runnable {
 	public BufferedImage getSpriteSheet() {
 		return spriteSheet;
 	}
+	
 	
 	
 	
