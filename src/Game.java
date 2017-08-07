@@ -22,9 +22,10 @@ public class Game extends Canvas implements Runnable {
 	private BufferedImage image = new BufferedImage(WIDTH, HEIGHT,
 			BufferedImage.TYPE_INT_RGB);
 	private BufferedImage spriteSheet = null;
-
+	//init classes 
 	private Player player;
 	private Ball ball;
+	private Brick brick;
 
 	private boolean initHit; // checks if ball is still moveable with player
 	private boolean ballHit;
@@ -106,6 +107,7 @@ public class Game extends Canvas implements Runnable {
 		g.drawImage(image, 0, 0, getWidth(), getHeight(), this);
 		ball.render(g);
 		player.render(g);
+		brick.render(g);
 
 		g.dispose();
 		bs.show();
@@ -121,6 +123,7 @@ public class Game extends Canvas implements Runnable {
 		addKeyListener(new UserInput(this));
 		player = new Player(200, 300, this, 100, 20);
 		ball = new Ball(this, player);
+		brick = new Brick(this, 1, 1);
 		initHit = true;
 		ballHit = true;
 	}
@@ -181,12 +184,12 @@ public class Game extends Canvas implements Runnable {
 	// method to check collisions between wall and ball
 	public void ballWallCollision() {
 		// checks if ball hits left side of frame
-		if (ball.getxPos() < -35) {
+		if (ball.getxPos() < 0) {
 			ball.setXSpeed(-ball.getxSpeed());
 			ballHit = false;
 		}
 		// checks if ball hits right side of frame
-		else if (ball.getxPos() > 425) {
+		else if (ball.getxPos() > 475) {
 			ball.setxSpeed(-ball.getxSpeed());
 			ballHit = false;
 		}
@@ -210,15 +213,26 @@ public class Game extends Canvas implements Runnable {
 					System.out.println("1");
 				}
 				else if (ball.getxSpeed() < 0 && ball.getxPos() < player.getxPos()) {
-					ball.setySpeed(-ball.getySpeed());
+					//ball.setySpeed(-ball.getySpeed());
+					if (player.getXSpeed() < 0) {
+						ball.setySpeed(ball.getySpeed());
+					}
+					else
+						ball.setySpeed(-ball.getySpeed());
 					System.out.println("2");
 				}
 				else if (ball.getxSpeed() > 0 && ball.getxPos() > player.getxPos()) {
-					ball.setySpeed(-ball.getySpeed());
+					//ball.setySpeed(-ball.getySpeed());
+					if (player.getXSpeed() > 0) {
+						ball.setySpeed(ball.getySpeed());
+					}
+					else
+						ball.setySpeed(-ball.getySpeed());
 					System.out.println("3");
 				}
-				else if (ball.getxSpeed() < 0 && ball.getxPos() > player.getxPos()) {
+				else if (ball.getxSpeed() < 0 && ball.getxPos() > player.getxPos() + 75) {
 					ball.setySpeed(-ball.getySpeed());
+					ball.setxSpeed(-ball.getxSpeed());
 					System.out.println("4");
 				}
 				else
