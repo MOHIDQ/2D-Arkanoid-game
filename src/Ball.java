@@ -3,8 +3,8 @@ import java.awt.image.BufferedImage;
 
 
 public class Ball {
-	private double xPos;
-	private double yPos;
+	private int xPos;
+	private int yPos;
 	private int xSpeed;
 	private int ySpeed;
 	private BufferedImage ball;
@@ -36,19 +36,19 @@ public class Ball {
 		this.ySpeed = ySpeed;
 	}
 
-	public double getxPos() {
+	public int getxPos() {
 		return xPos;
 	}
 
-	public void setxPos(double xPos) {
+	public void setxPos(int xPos) {
 		this.xPos = xPos;
 	}
 
-	public double getyPos() {
+	public int getyPos() {
 		return yPos;
 	}
 
-	public void setyPos(double yPos) {
+	public void setyPos(int yPos) {
 		this.yPos = yPos;
 	}
 

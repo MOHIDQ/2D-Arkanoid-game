@@ -5,15 +5,15 @@ import java.awt.image.BufferedImage;
 
 
 public class Player {
-	private double xPos;
-	private double yPos;
+	private int xPos;
+	private int yPos;
 	private int xSpeed;
 	private int ySpeed;
 	private int width;
 	private int height;
 	//private BufferedImage player;
 	private Rectangle player;
-	public Player(double xPos, double yPos, Game game, int width, int height) {
+	public Player(int xPos, int yPos, Game game, int width, int height) {
 		this.xPos = xPos;
 		this.yPos = yPos;
 		this.width = width;
@@ -34,11 +34,11 @@ public class Player {
 		
 	}
 	
-	public double getXPos() {
+	public int getXPos() {
 		return this.xPos;
 	}
 	
-	public double getYPos() {
+	public int getYPos() {
 		return this.yPos;
 	}
 	
@@ -66,7 +66,7 @@ public class Player {
 		//this.player = player;
 	}
 
-	public void setxPos(double xPos) {
+	public void setxPos(int xPos) {
 		this.xPos = xPos;
 	}
 
@@ -74,7 +74,7 @@ public class Player {
 		return yPos;
 	}
 
-	public void setyPos(double yPos) {
+	public void setyPos(int yPos) {
 		this.yPos = yPos;
 	}
 	

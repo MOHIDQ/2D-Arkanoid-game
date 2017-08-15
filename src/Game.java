@@ -90,6 +90,7 @@ public class Game extends Canvas implements Runnable {
 		player.tick();
 		ball.tick();
 		wallCollision();
+		brick.ballToBrickIntersection();
 		if (!initHit) {
 			ballWallCollision();
 			playerCollision();
@@ -121,9 +122,9 @@ public class Game extends Canvas implements Runnable {
 			e.printStackTrace();
 		}
 		addKeyListener(new UserInput(this));
-		player = new Player(200, 300, this, 100, 20);
+		player = new Player(200, 300, this, 100, 10);
 		ball = new Ball(this, player);
-		brick = new Brick(this, 1, 1);
+		brick = new Brick(this, 1, 1, ball);
 		initHit = true;
 		ballHit = true;
 	}
@@ -133,12 +134,14 @@ public class Game extends Canvas implements Runnable {
 		// if right key is hit change speed of paddle
 		if (key == KeyEvent.VK_RIGHT) {
 			player.setXSpeed(3);
+			//player.setxPos(player.getXPos() + 20);
 			if (initHit == true)
 				ball.setXSpeed(player.getXSpeed());
 		}
 		// if left key is hit change speed of paddle
 		else if (key == KeyEvent.VK_LEFT) {
 			player.setXSpeed(-3);
+			//player.setxPos(player.getXPos() - 20);
 			if (initHit == true)
 				ball.setXSpeed(player.getXSpeed());
 		}
@@ -170,7 +173,7 @@ public class Game extends Canvas implements Runnable {
 
 	// method to check collisions between of player paddle and wall
 	public void wallCollision() {
-		if (player.getXPos() < 0) {
+		if (player.getXPos() < 10) {
 			player.setXSpeed(2);
 			if (initHit)
 				ball.setXSpeed(player.getXSpeed());
@@ -189,7 +192,7 @@ public class Game extends Canvas implements Runnable {
 			ballHit = false;
 		}
 		// checks if ball hits right side of frame
-		else if (ball.getxPos() > 475) {
+		else if (ball.getxPos() > 465) {
 			ball.setxSpeed(-ball.getxSpeed());
 			ballHit = false;
 		}
@@ -208,27 +211,39 @@ public class Game extends Canvas implements Runnable {
 		if (p.intersects(b)) {
 			if (!ballHit) {
 				if (ball.getxSpeed() > 0 && ball.getxPos() < player.getxPos()) {
-					ball.setySpeed(-ball.getySpeed());
-					ball.setxSpeed(-ball.getxSpeed());
+					if (player.getXSpeed() > 0) {
+						ball.setxSpeed(-3);
+						ball.setySpeed(-ball.getySpeed());
+					}
+					else {
+						ball.setxSpeed(-3);
+						ball.setySpeed(-ball.getySpeed());
+					}
 					System.out.println("1");
 				}
 				else if (ball.getxSpeed() < 0 && ball.getxPos() < player.getxPos()) {
-					//ball.setySpeed(-ball.getySpeed());
-					if (player.getXSpeed() < 0) {
-						ball.setySpeed(ball.getySpeed());
-					}
-					else
+					if (player.getXSpeed() > 0) {
 						ball.setySpeed(-ball.getySpeed());
+						ball.setyPos(ball.getyPos() + 3);
+					}
+					else {
+						ball.setySpeed(-ball.getySpeed());
+						ball.setyPos(ball.getyPos() - 3);
+					}
 					System.out.println("2");
 				}
 				else if (ball.getxSpeed() > 0 && ball.getxPos() > player.getxPos()) {
-					//ball.setySpeed(-ball.getySpeed());
 					if (player.getXSpeed() > 0) {
-						ball.setySpeed(ball.getySpeed());
-					}
-					else
 						ball.setySpeed(-ball.getySpeed());
-					System.out.println("3");
+						ball.setyPos(ball.getyPos() - 3);
+						System.out.println("3");
+					}
+					else {
+						ball.setySpeed(-ball.getySpeed());
+						ball.setyPos(ball.getyPos() - 3);
+						System.out.println("3.1");
+					}
+					//System.out.println("3");
 				}
 				else if (ball.getxSpeed() < 0 && ball.getxPos() > player.getxPos() + 75) {
 					ball.setySpeed(-ball.getySpeed());
@@ -238,7 +253,8 @@ public class Game extends Canvas implements Runnable {
 				else
 					ball.setySpeed(-ball.getySpeed());
 			}
-		}
+		}	
+
 
 	}
 
