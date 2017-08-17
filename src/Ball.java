@@ -10,8 +10,8 @@ public class Ball {
 	private BufferedImage ball;
 	
 	public Ball(Game game, Player player) {
-		xPos = player.getXPos();
-		yPos = player.getYPos();
+		xPos = player.getXPos() + 35;
+		yPos = player.getYPos() - 23;
 		xSpeed = player.getXSpeed();
 		ySpeed = player.getYSpeed();
 		SpriteSheet ss = new SpriteSheet(game.getSpriteSheet());
@@ -25,7 +25,7 @@ public class Ball {
 	}
 	
 	public void render(Graphics g) {
-		g.drawImage(ball, (int)xPos + 2, (int)yPos - 17, null);
+		g.drawImage(ball, xPos, yPos, null); // + 2 /  -17
 	}
 	
 	public void setXSpeed(int xSpeed) {

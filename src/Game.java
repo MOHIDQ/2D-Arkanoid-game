@@ -6,6 +6,7 @@ import java.awt.event.KeyListener;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.*;
 import java.awt.Rectangle;
@@ -26,6 +27,10 @@ public class Game extends Canvas implements Runnable {
 	private Player player;
 	private Ball ball;
 	private Brick brick;
+	private PowerUp powerUp;
+	
+	private CopyOnWriteArrayList<PowerUp> powerupList = new CopyOnWriteArrayList<PowerUp>();
+	private CopyOnWriteArrayList<PowerUp> powerupListTemp = new CopyOnWriteArrayList<PowerUp>(); // collection for temp use to be removed
 
 	private boolean initHit; // checks if ball is still moveable with player
 	private boolean ballHit;
@@ -89,12 +94,15 @@ public class Game extends Canvas implements Runnable {
 	private void tick() {
 		player.tick();
 		ball.tick();
-		wallCollision();
-		brick.ballToBrickIntersection();
+		powerUp.tick(powerupList);
+		powerUp.removePowerUp(powerupList, powerupListTemp);
 		if (!initHit) {
 			ballWallCollision();
 			playerCollision();
 		}
+		wallCollision();
+		brick.ballToBrickIntersection();
+		
 
 	}
 
@@ -109,6 +117,7 @@ public class Game extends Canvas implements Runnable {
 		ball.render(g);
 		player.render(g);
 		brick.render(g);
+		powerUp.render(g, powerupList);
 
 		g.dispose();
 		bs.show();
@@ -125,6 +134,7 @@ public class Game extends Canvas implements Runnable {
 		player = new Player(200, 300, this, 100, 10);
 		ball = new Ball(this, player);
 		brick = new Brick(this, 1, 1, ball);
+		powerUp = new PowerUp(0, 0);
 		initHit = true;
 		ballHit = true;
 	}
@@ -150,6 +160,7 @@ public class Game extends Canvas implements Runnable {
 			if (initHit) {
 				ball.setXSpeed(2);
 				ball.setYSpeed(-2);
+				ballHit = false;
 			}
 			initHit = false;
 		}
@@ -174,11 +185,11 @@ public class Game extends Canvas implements Runnable {
 	// method to check collisions between of player paddle and wall
 	public void wallCollision() {
 		if (player.getXPos() < 10) {
-			player.setXSpeed(2);
+			//player.setXSpeed(2);
 			if (initHit)
 				ball.setXSpeed(player.getXSpeed());
 		} else if (player.getxPos() > 455) {
-			player.setXSpeed(-2);
+			//player.setXSpeed(-2);
 			if (initHit)
 				ball.setXSpeed(player.getXSpeed());
 		}
@@ -187,7 +198,7 @@ public class Game extends Canvas implements Runnable {
 	// method to check collisions between wall and ball
 	public void ballWallCollision() {
 		// checks if ball hits left side of frame
-		if (ball.getxPos() < 0) {
+		if (ball.getxPos() < 5) {
 			ball.setXSpeed(-ball.getxSpeed());
 			ballHit = false;
 		}
@@ -206,17 +217,17 @@ public class Game extends Canvas implements Runnable {
 	// method to check collision between player paddle and wall
 	public void playerCollision() {
 		p = new Rectangle((int) player.getxPos(), (int) player.getyPos(), player.getWidth(), player.getHeight());
-		b = new Rectangle((int) ball.getxPos(), (int) ball.getyPos(), ball
+		b = new Rectangle((int) ball.getxPos() + 2, (int) ball.getyPos() + 17, ball
 				.getBall().getWidth(), ball.getBall().getHeight() - 20);
 		if (p.intersects(b)) {
 			if (!ballHit) {
-				if (ball.getxSpeed() > 0 && ball.getxPos() < player.getxPos()) {
+				if (ball.getxSpeed() > 0 && ball.getxPos() < player.getxPos() - 20) {
 					if (player.getXSpeed() > 0) {
-						ball.setxSpeed(-3);
+						ball.setxSpeed(-ball.getxSpeed());
 						ball.setySpeed(-ball.getySpeed());
 					}
 					else {
-						ball.setxSpeed(-3);
+						ball.setxSpeed(-ball.getxSpeed());
 						ball.setySpeed(-ball.getySpeed());
 					}
 					System.out.println("1");
@@ -243,9 +254,8 @@ public class Game extends Canvas implements Runnable {
 						ball.setyPos(ball.getyPos() - 3);
 						System.out.println("3.1");
 					}
-					//System.out.println("3");
 				}
-				else if (ball.getxSpeed() < 0 && ball.getxPos() > player.getxPos() + 75) {
+				else if (ball.getxSpeed() < 0 && ball.getxPos() > player.getxPos() + 85) {
 					ball.setySpeed(-ball.getySpeed());
 					ball.setxSpeed(-ball.getxSpeed());
 					System.out.println("4");
@@ -256,6 +266,11 @@ public class Game extends Canvas implements Runnable {
 		}	
 
 
+	}
+	
+	public void addPowerUp(int x, int y) {
+		//System.out.println("sdfsfd");
+		powerupList.add(new PowerUp(x, y));
 	}
 
 	public static void main(String args[]) {

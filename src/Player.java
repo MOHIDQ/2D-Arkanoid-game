@@ -30,7 +30,7 @@ public class Player {
 	
 	public void render(Graphics g) {
 		g.setColor(Color.white);
-		g.drawRect((int)xPos, (int)yPos, width, height);
+		g.drawRect((int)xPos - 10, (int)yPos, width, height);
 		
 	}
 	
